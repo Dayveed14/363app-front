@@ -1,0 +1,12 @@
+# This is a member portal, not a marketing site — most routes sit behind
+# login and have no business being indexed. Per-page <meta name="robots">
+# (see src/seo/usePageMeta.js) also sets noindex on every authenticated
+# route; this file is the crawler-level backstop.
+
+User-agent: *
+Allow: /$
+Allow: /login$
+Allow: /register$
+Disallow: /
+
+Sitemap: https://portal.363resources.com/sitemap.xml

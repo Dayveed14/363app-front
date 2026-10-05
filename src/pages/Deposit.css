@@ -1,0 +1,31 @@
+.deposit-history {
+  display: flex;
+  flex-direction: column;
+}
+.deposit-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.deposit-row:last-child {
+  border-bottom: none;
+}
+.deposit-amount {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+.deposit-date {
+  font-size: 12px;
+  color: var(--ink-400);
+  margin-top: 2px;
+}
+.deposit-reason {
+  font-size: 12.5px;
+  color: var(--coral-600);
+  margin-top: 4px;
+  max-width: 280px;
+}

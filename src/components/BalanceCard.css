@@ -1,0 +1,89 @@
+.balance-card {
+  background: linear-gradient(135deg, var(--blue-700) 0%, var(--navy-900) 100%);
+  border-radius: var(--radius-lg);
+  padding: 26px 26px 20px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.balance-card::after {
+  content: "";
+  position: absolute;
+  right: -60px;
+  top: -60px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+}
+
+.balance-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  position: relative;
+}
+.balance-label {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.65);
+  font-weight: 500;
+}
+.balance-amount {
+  font-size: 34px;
+  font-weight: 800;
+  margin-top: 6px;
+  letter-spacing: -0.01em;
+}
+.balance-book {
+  margin-top: 6px;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.6);
+}
+.balance-eye {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.balance-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 22px;
+  position: relative;
+}
+.balance-action {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: background 0.15s ease;
+}
+.balance-action:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+@media (max-width: 480px) {
+  .balance-amount {
+    font-size: 28px;
+  }
+  .balance-action span {
+    display: none;
+  }
+}

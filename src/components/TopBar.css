@@ -1,0 +1,139 @@
+.topbar-container {
+max-width: 880px;
+}
+
+.topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.topbar-title {
+  font-size: 22px;
+  font-weight: 700;
+}
+.topbar-banner {
+  display: none;
+}
+
+.topbar-banner2 {
+  max-width: 880px;
+  margin-bottom: 16px;
+}
+.topbar-banner2 img{
+  width: 100%;
+}
+
+.topbar-banner img{
+  display: unset;
+}
+.topbar-sub {
+  margin-top: 4px;
+  font-size: 13.5px;
+  color: var(--ink-600);
+}
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.topbar-bell {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--ink-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.topbar-bell:hover {
+  background: var(--blue-50);
+}
+.topbar-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--blue-600);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.topbar-profile {
+  position: relative;
+}
+
+.topbar-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: var(--blue-600);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.topbar-avatar:hover {
+  opacity: 0.9;
+}
+
+.topbar-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 120px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 5px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  z-index: 100;
+}
+
+.topbar-dropdown button {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 9px 10px;
+  text-align: left;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ink-700);
+}
+
+.topbar-dropdown button:hover {
+  background: var(--blue-50);
+}
+@media (max-width: 768px) {
+ .topbar-banner {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.topbar-banner2 {
+  display: none;
+}
+
+.topbar-banner img{
+  display: block;
+  width: 100%;
+}
+.topbar-container{
+  width: 100%;
+}
+}

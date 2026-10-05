@@ -1,0 +1,23 @@
+.profile-list {
+  margin: 0;
+}
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13.5px;
+}
+.profile-row:last-child {
+  border-bottom: none;
+}
+.profile-row dt {
+  color: var(--ink-600);
+}
+.profile-row dd {
+  margin: 0;
+  font-weight: 600;
+  color: var(--ink-900);
+  text-align: right;
+}

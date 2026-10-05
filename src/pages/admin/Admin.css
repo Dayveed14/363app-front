@@ -1,0 +1,165 @@
+.admin-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 920px;
+}
+.admin-overview-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  text-decoration: none;
+  transition: box-shadow 0.15s ease;
+}
+.admin-overview-card:hover {
+  box-shadow: 0 2px 4px rgba(14, 21, 38, 0.06), 0 12px 28px rgba(14, 21, 38, 0.08);
+}
+.admin-overview-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--blue-100);
+  color: var(--blue-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.admin-overview-icon-mint {
+  background: var(--mint-100);
+  color: var(--mint-600);
+}
+.admin-overview-icon-coral {
+  background: var(--coral-100);
+  color: var(--coral-600);
+}
+.admin-overview-count {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--ink-900);
+}
+.admin-overview-label {
+  font-size: 13px;
+  color: var(--ink-600);
+  margin-top: 2px;
+}
+
+@media (max-width: 760px) {
+  .admin-overview-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 560px) {
+  .admin-overview-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- shared list page (KYC review / deposit review) --- */
+
+.admin-list-page {
+  max-width: 820px;
+  padding: 18px 22px 8px;
+}
+.admin-list-head {
+  margin-bottom: 8px;
+}
+.admin-tabs {
+  display: flex;
+  gap: 6px;
+  background: var(--bg);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  width: fit-content;
+  flex-wrap: wrap;
+}
+.admin-tab {
+  border: none;
+  background: transparent;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-600);
+  cursor: pointer;
+}
+.admin-tab.active {
+  background: #fff;
+  color: var(--blue-600);
+  box-shadow: 0 1px 2px rgba(14, 21, 38, 0.08);
+}
+
+.admin-empty {
+  padding: 40px 0;
+  text-align: center;
+  color: var(--ink-400);
+  font-size: 13.5px;
+}
+
+.admin-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 4px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.admin-row:last-child {
+  border-bottom: none;
+}
+.admin-row-main {
+  flex: 1;
+  min-width: 220px;
+}
+.admin-row-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+.admin-row-sub {
+  font-size: 12.5px;
+  color: var(--ink-600);
+  margin-top: 3px;
+}
+.admin-row-reason {
+  font-size: 12.5px;
+  color: var(--coral-600);
+  margin-top: 5px;
+}
+.admin-row-docs {
+  display: flex;
+  gap: 14px;
+  margin-top: 8px;
+}
+.admin-doc-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  color: var(--blue-600);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.admin-row-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.admin-row-actions .btn {
+  padding: 9px 14px;
+  font-size: 13px;
+}
+.admin-btn-decline {
+  color: var(--coral-600);
+  border-color: var(--coral-100);
+}
+.admin-btn-decline:hover {
+  background: var(--coral-100);
+}

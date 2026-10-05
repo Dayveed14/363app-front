@@ -1,0 +1,119 @@
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  max-width: 880px;
+  align-items: start;
+}
+
+.form-card {
+  padding: 22px 24px;
+}
+.form-card-title {
+  font-size: 15.5px;
+  font-weight: 700;
+}
+.form-card-sub {
+  font-size: 13px;
+  color: var(--ink-600);
+  margin-top: 6px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.account-box {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--blue-50);
+  padding: 4px 16px;
+}
+.account-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13.5px;
+}
+.account-row:last-child {
+  border-bottom: none;
+}
+.account-label {
+  color: var(--ink-600);
+  flex-shrink: 0;
+  width: 110px;
+}
+.account-value {
+  font-weight: 600;
+  color: var(--ink-900);
+  flex: 1;
+}
+.account-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  color: var(--blue-600);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 6px;
+}
+
+.form-success {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--mint-100);
+  color: var(--mint-600);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+.form-success-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink-900);
+}
+.form-success-body {
+  font-size: 13px;
+  color: var(--ink-600);
+  margin-top: 3px;
+  line-height: 1.5;
+}
+
+.otp-inputs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.otp-inputs input {
+  width: 44px;
+  height: 48px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.otp-inputs input:focus {
+  border-color: var(--blue-500);
+  box-shadow: 0 0 0 3px var(--blue-100);
+  outline: none;
+}
+
+.withdraw-available {
+  font-size: 13px;
+  color: var(--ink-600);
+  margin-bottom: 18px;
+}
+.withdraw-available strong {
+  color: var(--ink-900);
+  font-weight: 700;
+}
+
+@media (max-width: 720px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,100 @@
+.kyc-page {
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.kyc-status {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 18px 20px;
+  max-width: 560px;
+}
+.kyc-status-title {
+  font-weight: 700;
+  font-size: 14.5px;
+  color: var(--ink-900);
+}
+.kyc-status-body {
+  font-size: 13.5px;
+  color: var(--ink-600);
+  margin-top: 4px;
+  line-height: 1.6;
+}
+.kyc-status-approved {
+  border-color: var(--mint-100);
+  background: var(--mint-100);
+}
+.kyc-status-approved svg {
+  color: var(--mint-600);
+  flex-shrink: 0;
+}
+.kyc-status-pending svg {
+  color: var(--amber-600);
+  flex-shrink: 0;
+}
+.kyc-status-declined {
+  border-color: var(--coral-100);
+  background: var(--coral-100);
+}
+.kyc-status-declined svg {
+  color: var(--coral-600);
+  flex-shrink: 0;
+}
+
+.kyc-form {
+  max-width: 560px;
+}
+
+.kyc-upload-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.kyc-file-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+}
+.kyc-file-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-700);
+}
+.kyc-file-drop {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 12px;
+  font-size: 13px;
+  color: var(--ink-400);
+  background: var(--bg);
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.kyc-file-drop span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kyc-file-field:hover .kyc-file-drop {
+  border-color: var(--blue-500);
+}
+.kyc-file-drop.has-file {
+  border-style: solid;
+  border-color: var(--blue-500);
+  color: var(--ink-900);
+  background: var(--blue-50);
+}
+
+@media (max-width: 560px) {
+  .kyc-upload-row {
+    grid-template-columns: 1fr;
+  }
+}

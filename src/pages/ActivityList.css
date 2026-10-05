@@ -1,0 +1,69 @@
+.activity-history {
+  display: flex;
+  flex-direction: column;
+}
+.activity-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.activity-row:last-child {
+  border-bottom: none;
+}
+.activity-row-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.activity-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.activity-icon-in {
+  background: var(--mint-100);
+  color: var(--mint-600);
+}
+.activity-icon-out {
+  background: var(--coral-100);
+  color: var(--coral-600);
+}
+.activity-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-900);
+}
+.activity-amount {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+.activity-amount.amount-in {
+  color: var(--mint-600);
+}
+.activity-amount.amount-out {
+  color: var(--coral-600);
+}
+.activity-date {
+  font-size: 12px;
+  color: var(--ink-400);
+  margin-top: 2px;
+}
+.activity-reason {
+  font-size: 12.5px;
+  color: var(--coral-600);
+  margin-top: 4px;
+  max-width: 280px;
+}
+.activity-meta {
+  text-align: right;
+  flex-shrink: 0;
+}

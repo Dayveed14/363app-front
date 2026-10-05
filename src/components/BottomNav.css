@@ -1,0 +1,32 @@
+.bottom-nav {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--navy-950);
+    padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+    z-index: 20;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .bottom-nav-link {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 6px 2px;
+    border-radius: var(--radius-sm);
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 10.5px;
+    font-weight: 600;
+  }
+  .bottom-nav-link.active {
+    color: #fff;
+  }
+}

@@ -1,0 +1,9 @@
+.deposit-callback-panel {
+  text-align: left;
+}
+.deposit-callback-mark-success {
+  background: var(--mint-600);
+}
+.deposit-callback-mark-failed {
+  background: var(--coral-600);
+}
