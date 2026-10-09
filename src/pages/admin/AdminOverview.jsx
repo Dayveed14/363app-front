@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ShieldCheck, ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
+import { ShieldCheck, ArrowDownToLine, ArrowUpFromLine, Briefcase } from "lucide-react";
 import { api } from "../../api/client";
 import { usePageMeta } from "../../seo/usePageMeta";
 import "./Admin.css";
@@ -10,6 +10,7 @@ export default function AdminOverview() {
   const [pendingKyc, setPendingKyc] = useState(null);
   const [pendingDeposits, setPendingDeposits] = useState(null);
   const [pendingWithdrawals, setPendingWithdrawals] = useState(null);
+  const [pendingFacilities, setPendingFacilities] = useState(null);
 
   useEffect(() => {
     api.admin.kyc.list("pending").then(({ submissions }) => setPendingKyc(submissions.length)).catch(() => setPendingKyc(0));
@@ -21,6 +22,10 @@ export default function AdminOverview() {
       .list("pending")
       .then(({ withdrawals }) => setPendingWithdrawals(withdrawals.length))
       .catch(() => setPendingWithdrawals(0));
+    api.admin.financeFacility
+      .list("under_review")
+      .then(({ applications }) => setPendingFacilities(applications.length))
+      .catch(() => setPendingFacilities(0));
   }, []);
 
   return (
@@ -46,6 +51,14 @@ export default function AdminOverview() {
         <div>
           <p className="admin-overview-count">{pendingWithdrawals ?? "…"}</p>
           <p className="admin-overview-label">Withdrawals awaiting review</p>
+        </div>
+      </Link>
+
+      <Link to="/admin/finance-facilities" className="card admin-overview-card">
+        <div className="admin-overview-icon"><Briefcase size={20} /></div>
+        <div>
+          <p className="admin-overview-count">{pendingFacilities ?? "…"}</p>
+          <p className="admin-overview-label">Finance facility applications under review</p>
         </div>
       </Link>
     </div>

@@ -100,6 +100,15 @@ export const api = {
     listMine: () => request("/api/withdrawals/me"),
   },
 
+  financeFacility: {
+    getEligibility: () => request("/api/finance-facilities/eligibility"),
+    apply: (form) => request("/api/finance-facilities/apply", { method: "POST", body: form }),
+    listMine: () => request("/api/finance-facilities/me"),
+    getOne: (id) => request(`/api/finance-facilities/${id}`),
+    addDocument: (id, formData) => requestForm(`/api/finance-facilities/${id}/documents`, formData),
+    document: (id, docId) => requestBlob(`/api/finance-facilities/${id}/documents/${docId}`),
+  },
+
   admin: {
     kyc: {
       list: (status) => request(`/api/admin/kyc${status ? `?status=${status}` : ""}`),
@@ -118,6 +127,17 @@ export const api = {
       approve: (id) => request(`/api/admin/withdrawals/${id}/approve`, { method: "POST" }),
       decline: (id, reason) => request(`/api/admin/withdrawals/${id}/decline`, { method: "POST", body: { reason } }),
       process: (id) => request(`/api/admin/withdrawals/${id}/process`, { method: "POST" }),
+    },
+    financeFacility: {
+      list: (status) => request(`/api/admin/finance-facilities${status ? `?status=${status}` : ""}`),
+      getOne: (id) => request(`/api/admin/finance-facilities/${id}`),
+      document: (id, docId) => requestBlob(`/api/admin/finance-facilities/${id}/documents/${docId}`),
+      requestInfo: (id, requestText) =>
+        request(`/api/admin/finance-facilities/${id}/request-info`, { method: "POST", body: { request: requestText } }),
+      approve: (id, terms) =>
+        request(`/api/admin/finance-facilities/${id}/approve`, { method: "POST", body: terms }),
+      decline: (id, reason) =>
+        request(`/api/admin/finance-facilities/${id}/decline`, { method: "POST", body: { reason } }),
     },
   },
 };

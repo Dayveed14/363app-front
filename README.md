@@ -128,14 +128,34 @@ than letting them inherit a neighboring page's title.
 - **`src/pages/Dashboard.jsx`** shows real `bookBalance` /
   `availableBalance` from `/auth/me` and a KYC-status banner (prompts
   completion, shows a decline reason, or disappears once approved).
+- **`src/pages/BusinessFinanceFacility.jsx`** — one page that moves
+  through states depending on the member's situation: no application yet
+  → **eligibility check** (shows each check as pass/fail plus a
+  "preliminarily eligible" verdict — business purpose is listed as
+  "assessed once you apply", matching how the backend treats it) →
+  **application form** → **document checklist** (identity isn't re-asked
+  for a member with approved KYC, only facility-specific docs) → status
+  card while under review. If an officer requests more information, it
+  shows their request alongside the same document-upload checklist;
+  uploading flips the application back into review automatically. Once
+  approved it shows the offered terms (which may differ from what was
+  requested). Application history sits below throughout. Declined
+  applications don't block starting a new one.
 - **`src/pages/admin/`** — a second, separate area at `/admin`, `/admin/kyc`,
-  `/admin/deposits`, `/admin/withdrawals`, gated by `user.role === "admin"`
-  in `src/components/AdminLayout.jsx` (redirects a signed-in non-admin to
-  `/`, not to login — they're authenticated, just not allowed here). KYC
-  document previews are fetched as a blob with credentials
-  (`api.admin.kyc.document`) and opened via `URL.createObjectURL` rather
-  than linked directly, so viewing one still goes through the normal
-  cookie-authenticated request.
+  `/admin/deposits`, `/admin/withdrawals`, `/admin/finance-facilities`,
+  gated by `user.role === "admin"` in `src/components/AdminLayout.jsx`
+  (redirects a signed-in non-admin to `/`, not to login — they're
+  authenticated, just not allowed here). The finance facility area has a
+  queue page and a detail/review page
+  (`AdminFinanceFacilityDetail.jsx`): request details, account analysis
+  (membership, deposit/withdrawal metrics), KYC summary with links to
+  view the member's KYC documents, the application's own documents, then
+  the decision — request more information, decline with a reason, or
+  approve with terms (amount defaults to what was requested but is
+  editable, since officers can counter-offer). Document previews are
+  fetched as a blob with credentials and opened via
+  `URL.createObjectURL` rather than linked directly, so viewing one still
+  goes through the normal cookie-authenticated request.
 - There's no UI to become an admin — see the backend README for how to
   promote an account by hand. Makes sense: an "become admin" button is a
   privilege-escalation surface this project doesn't need.
@@ -143,9 +163,12 @@ than letting them inherit a neighboring page's title.
 ## Still mock, pending the next backend phase
 
 The change-password form is still local state — no backend endpoint for
-it yet. The 363 Resources Business Finance Facility and broader admin
-reporting are further out. Search the codebase for `// Would call` and
-`// Replace with` to find what's left.
+it yet. Finance facility offer acceptance, agreement signing,
+disbursement, the active-facility/repayment-schedule view, and appeals
+come next (the member page already shows the approved terms, but says
+plainly that the next steps aren't built yet rather than pretending).
+Search the codebase for `// Would call` and `// Replace with` to find
+what's left.
 
 ## Stack
 

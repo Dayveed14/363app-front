@@ -11,12 +11,15 @@ import Kyc from "./pages/Kyc";
 import Deposit from "./pages/Deposit";
 import DepositCallback from "./pages/DepositCallback";
 import Withdraw from "./pages/Withdraw";
+import BusinessFinanceFacility from "./pages/BusinessFinanceFacility";
 import Transactions from "./pages/Transactions";
 import Profile from "./pages/Profile";
 import AdminOverview from "./pages/admin/AdminOverview";
 import AdminKyc from "./pages/admin/AdminKyc";
 import AdminDeposits from "./pages/admin/AdminDeposits";
 import AdminWithdrawals from "./pages/admin/AdminWithdrawals";
+import AdminFinanceFacilities from "./pages/admin/AdminFinanceFacilities";
+import AdminFinanceFacilityDetail from "./pages/admin/AdminFinanceFacilityDetail";
 
 export default function App() {
   return (
@@ -36,6 +39,7 @@ export default function App() {
             <Route path="/kyc" element={<Kyc />} />
             <Route path="/deposit" element={<Deposit />} />
             <Route path="/withdraw" element={<Withdraw />} />
+            <Route path="/finance-facility" element={<BusinessFinanceFacility />} />
             <Route path="/transactions" element={<Transactions />} />
             <Route path="/profile" element={<Profile />} />
           </Route>
@@ -45,6 +49,8 @@ export default function App() {
             <Route path="/admin/kyc" element={<AdminKyc />} />
             <Route path="/admin/deposits" element={<AdminDeposits />} />
             <Route path="/admin/withdrawals" element={<AdminWithdrawals />} />
+            <Route path="/admin/finance-facilities" element={<AdminFinanceFacilities />} />
+            <Route path="/admin/finance-facilities/:id" element={<AdminFinanceFacilityDetail />} />
           </Route>
         </Routes>
       </AuthProvider>
