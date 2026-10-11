@@ -24,6 +24,7 @@ const STATUS_LABEL = {
   additional_information_required: "Action needed",
   approved: "Approved",
   declined: "Declined",
+  disbursed: "Disbursed",
 };
 
 const PURPOSE_OPTIONS = [
@@ -40,7 +41,7 @@ const REQUIRED_DOCS = [
   { type: "financial_records", label: "Business financial records" },
 ];
 
-const ACTIVE_STATUSES = ["submitted", "under_review", "additional_information_required", "approved"];
+const ACTIVE_STATUSES = ["submitted", "under_review", "additional_information_required", "approved", "disbursed"];
 
 export default function BusinessFinanceFacility() {
   usePageMeta({ title: "Business Finance Facility" });
@@ -370,60 +371,155 @@ function DocumentChecklist({ applicationId, onDone }) {
 // --- Active application status ---
 
 function ApplicationStatus({ application, onRefresh }) {
-  if (application.status === "approved") {
-    return (
-      <div className="card ff-offer">
-        <p className="ff-status-eyebrow">Active Facility</p>
-        <p className="ff-offer-amount nums">{naira(application.approvedAmount)}</p>
-        {application.amountRequested !== application.approvedAmount && (
-          <p className="form-card-sub">Requested {naira(application.amountRequested)}</p>
-        )}
-        <div className="ff-offer-terms">
-          <div><span>Term</span><strong>{application.termMonths} months</strong></div>
-          <div><span>Repayment</span><strong>{naira(application.installmentAmount)}/{application.repaymentFrequency}</strong></div>
-          <div><span>Interest</span><strong>{application.interestRate}%</strong></div>
-        </div>
-        <p className="form-card-sub" style={{ marginTop: 12 }}>
-          Offer acceptance, agreement signing, and disbursement are coming in the next update —
-          for now, an officer will follow up with you directly to proceed.
-        </p>
-      </div>
-    );
-  }
+if (application.status === "disbursed") {
+return ( <div className="card ff-offer"> <p className="ff-status-eyebrow">Facility Active</p>
 
-  if (application.status === "additional_information_required") {
-    return (
-      <>
-        <div className="card kyc-status kyc-status-declined">
-          <ShieldAlert size={20} />
-          <div>
-            <p className="kyc-status-title">An officer requested more information</p>
-            <p className="kyc-status-body">{application.additionalInformationRequest}</p>
-          </div>
-        </div>
-        <DocumentChecklist applicationId={application.id} onDone={onRefresh} />
-      </>
-    );
-  }
+    <p className="ff-offer-amount nums">
+      {naira(application.approvedAmount)}
+    </p>
 
-  // submitted / under_review
-  return (
-    <div className="card ff-intro">
-      <div className="ff-intro-icon"><Clock3 size={22} /></div>
-      <p className="ff-status-title">
-        {application.status === "submitted" ? "Submitted" : "Under review"}
-      </p>
+    {Number(application.amountRequested) !==
+      Number(application.approvedAmount) && (
       <p className="form-card-sub">
-        Your request for {naira(application.amountRequested)} is being reviewed. We'll email you once
-        there's an update.
+        Requested {naira(application.amountRequested)}
       </p>
-      {application.documents.length > 0 && (
-        <div className="ff-doc-list">
-          {application.documents.map((d) => (
-            <span key={d.id} className="ff-doc-chip"><FileText size={13} /> {d.fileName}</span>
-          ))}
-        </div>
-      )}
+    )}
+
+    <div className="ff-offer-terms">
+      <div>
+        <span>Term</span>
+        <strong>{application.termMonths} months</strong>
+      </div>
+
+      <div>
+        <span>Repayment</span>
+        <strong>
+          {naira(application.installmentAmount)}/
+          {application.repaymentFrequency}
+        </strong>
+      </div>
+
+      <div>
+        <span>Interest</span>
+        <strong>{application.interestRate}%</strong>
+      </div>
     </div>
-  );
+
+    {application.disbursedAt && (
+      <p className="form-card-sub" style={{ marginTop: 12 }}>
+        Disbursed on {fmtDate(application.disbursedAt)}
+      </p>
+    )}
+
+    <p className="form-card-sub" style={{ marginTop: 12 }}>
+      Your finance facility has been disbursed successfully. Please keep
+      track of your repayment obligations according to the agreed terms.
+    </p>
+
+    {application.disbursementReference && (
+      <p className="form-card-sub" style={{ marginTop: 8 }}>
+        Disbursement reference: {application.disbursementReference}
+      </p>
+    )}
+  </div>
+);
+
+
 }
+
+if (application.status === "approved") {
+return ( <div className="card ff-offer"> <p className="ff-status-eyebrow">Approved — Awaiting Disbursement</p>
+
+
+    <p className="ff-offer-amount nums">
+      {naira(application.approvedAmount)}
+    </p>
+
+    {Number(application.amountRequested) !==
+      Number(application.approvedAmount) && (
+      <p className="form-card-sub">
+        Requested {naira(application.amountRequested)}
+      </p>
+    )}
+
+    <div className="ff-offer-terms">
+      <div>
+        <span>Term</span>
+        <strong>{application.termMonths} months</strong>
+      </div>
+
+      <div>
+        <span>Repayment</span>
+        <strong>
+          {naira(application.installmentAmount)}/
+          {application.repaymentFrequency}
+        </strong>
+      </div>
+
+      <div>
+        <span>Interest</span>
+        <strong>{application.interestRate}%</strong>
+      </div>
+    </div>
+
+    <p className="form-card-sub" style={{ marginTop: 12 }}>
+      Your facility has been approved and is awaiting disbursement.
+    </p>
+  </div>
+);
+
+
+}
+
+if (application.status === "additional_information_required") {
+return (
+<> <div className="card kyc-status kyc-status-declined"> <ShieldAlert size={20} /> <div> <p className="kyc-status-title">
+An officer requested more information </p> <p className="kyc-status-body">
+{application.additionalInformationRequest} </p> </div> </div>
+
+    <DocumentChecklist
+      applicationId={application.id}
+      onDone={onRefresh}
+    />
+  </>
+);
+
+
+}
+
+if (application.status === "declined") {
+return ( <div className="card kyc-status kyc-status-declined"> <XCircle size={20} /> <div> <p className="kyc-status-title">Application declined</p> <p className="kyc-status-body">
+Unfortunately, your finance facility application was declined.
+Please contact the cooperative for more information. </p> </div> </div>
+);
+}
+
+// submitted / under_review
+return ( <div className="card ff-intro"> <div className="ff-intro-icon"> <Clock3 size={22} /> </div>
+
+
+  <p className="ff-status-title">
+    {application.status === "submitted" ? "Submitted" : "Under review"}
+  </p>
+
+  <p className="form-card-sub">
+    Your request for {naira(application.amountRequested)} is being reviewed.
+    We'll email you once there's an update.
+  </p>
+
+  {Array.isArray(application.documents) &&
+    application.documents.length > 0 && (
+      <div className="ff-doc-list">
+        {application.documents.map((d) => (
+          <span key={d.id} className="ff-doc-chip">
+            <FileText size={13} /> {d.fileName}
+          </span>
+        ))}
+      </div>
+    )}
+</div>
+
+
+);
+}
+

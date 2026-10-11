@@ -108,6 +108,37 @@ export const api = {
     addDocument: (id, formData) => requestForm(`/api/finance-facilities/${id}/documents`, formData),
     document: (id, docId) => requestBlob(`/api/finance-facilities/${id}/documents/${docId}`),
   },
+    financeFacilityRepayments: {
+    // Repayment dashboard: facilities, balances, and next payments.
+    getDashboard: () =>
+      request("/api/finance-facility-repayments/dashboard"),
+
+    // Get the repayment schedule for a facility.
+    getSchedule: (facilityId) =>
+      request(`/api/finance-facility-repayments/${facilityId}/schedule`),
+
+    // Get the outstanding balance for a facility.
+    getBalance: (facilityId) =>
+      request(`/api/finance-facility-repayments/${facilityId}/balance`),
+
+    // Get successful repayment history.
+    getHistory: () =>
+      request("/api/finance-facility-repayments/history"),
+
+    // Initialize a Paystack repayment.
+    initialize: (facilityId, amount) =>
+      request(`/api/finance-facility-repayments/${facilityId}/initialize`, {
+        method: "POST",
+        body: { amount },
+      }),
+
+    // Verify a Paystack repayment after returning from checkout.
+    verify: (reference) =>
+      request("/api/finance-facility-repayments/verify", {
+        method: "POST",
+        body: { reference },
+      }),
+  },
 
   admin: {
     kyc: {
@@ -138,6 +169,11 @@ export const api = {
         request(`/api/admin/finance-facilities/${id}/approve`, { method: "POST", body: terms }),
       decline: (id, reason) =>
         request(`/api/admin/finance-facilities/${id}/decline`, { method: "POST", body: { reason } }),
+      disburse: (id, disbursementReference) =>
+        request(`/api/admin/finance-facilities/${id}/disburse`, {
+          method: "POST",
+          body: { disbursementReference },
+        }),
     },
   },
 };

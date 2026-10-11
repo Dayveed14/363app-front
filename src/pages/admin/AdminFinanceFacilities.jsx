@@ -10,6 +10,7 @@ const TABS = [
   { key: "additional_information_required", label: "Awaiting Member" },
   { key: "approved", label: "Approved" },
   { key: "declined", label: "Declined" },
+  { key: "disbursed", label: "Disbursed" },
 ];
 
 const naira = (n) => "₦" + Number(n).toLocaleString("en-NG");
@@ -57,7 +58,21 @@ export default function AdminFinanceFacilities() {
             <div className="admin-row-main">
               <p className="admin-row-title">{a.member.fullName} — {naira(a.amountRequested)}</p>
               <p className="admin-row-sub">{a.member.email} · {a.member.memberId}</p>
-              <p className="admin-row-sub">Submitted {fmtDate(a.submittedAt)}</p>
+              <p className="admin-row-sub">
+  Submitted {fmtDate(a.submittedAt)}
+</p>
+
+{a.status === "disbursed" && (
+  <>
+    <p className="admin-row-sub">
+      Disbursed {a.disbursedAt ? fmtDate(a.disbursedAt) : "—"}
+    </p>
+
+    <p className="admin-row-sub">
+      Approved amount: {naira(a.approvedAmount)}
+    </p>
+  </>
+)}
             </div>
           </Link>
         ))

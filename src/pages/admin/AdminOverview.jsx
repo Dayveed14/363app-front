@@ -23,7 +23,7 @@ export default function AdminOverview() {
       .then(({ withdrawals }) => setPendingWithdrawals(withdrawals.length))
       .catch(() => setPendingWithdrawals(0));
     api.admin.financeFacility
-      .list("under_review")
+      .list("submitted")
       .then(({ applications }) => setPendingFacilities(applications.length))
       .catch(() => setPendingFacilities(0));
   }, []);

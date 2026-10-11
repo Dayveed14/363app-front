@@ -70,6 +70,265 @@
   color: var(--blue-600);
 }
 
+/* ── Repayment Summary ─────────────────────────────── */
+
+.dash-grid > .repayment-summary {
+  grid-column: 1 / -1;
+  padding: 22px;
+  min-width: 0;
+}
+
+.repayment-summary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.repayment-summary-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.repayment-summary-heading h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: var(--ink-900);
+}
+
+.repayment-summary-heading .form-card-sub {
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
+  color: var(--ink-600);
+}
+
+.repayment-summary-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--blue-100);
+  color: var(--blue-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.repayment-facility {
+  padding: 20px 0 0;
+  margin-top: 18px;
+  border-top: 1px solid var(--border, #e5e7eb);
+}
+
+.repayment-facility:first-of-type {
+  margin-top: 0;
+}
+
+.repayment-facility-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.repayment-facility-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink-900);
+  margin: 0 0 5px;
+  overflow-wrap: anywhere;
+}
+
+.repayment-facility-top .form-card-sub {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-600);
+  margin: 0;
+}
+
+.repayment-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  background: var(--blue-100);
+  color: var(--blue-600);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.repayment-status-complete {
+  background: var(--mint-100);
+  color: var(--mint-600);
+}
+
+.repayment-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.repayment-metric {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 15px;
+  border-radius: 12px;
+  background: var(--surface-subtle, #f8fafc);
+  border: 1px solid var(--border, #e5e7eb);
+}
+
+.repayment-metric > span {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-600);
+}
+
+.repayment-metric > strong {
+  font-size: clamp(14px, 1.8vw, 18px);
+  line-height: 1.35;
+  font-weight: 750;
+  color: var(--ink-900);
+  overflow-wrap: anywhere;
+}
+
+.repayment-metric > small {
+  font-size: 11.5px;
+  color: var(--ink-600);
+  line-height: 1.4;
+}
+
+.repayment-metric-primary {
+  background: var(--blue-100);
+  border-color: transparent;
+}
+
+.repayment-metric-primary > strong {
+  color: var(--blue-600);
+}
+
+.repayment-progress-section {
+  margin-top: 22px;
+}
+
+.repayment-progress-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 9px;
+}
+
+.repayment-progress-label > span {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-600);
+}
+
+.repayment-progress-label > strong {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.repayment-progress-track {
+  width: 100%;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--blue-100);
+}
+
+.repayment-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--blue-600);
+  transition: width 0.35s ease;
+}
+
+.repayment-facility-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 15px;
+  border-top: 1px solid var(--border, #e5e7eb);
+}
+
+.repayment-facility-footer > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--ink-600);
+  font-size: 12px;
+}
+
+.repayment-details-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.repayment-details-link:hover {
+  text-decoration: underline;
+}
+
+/* ── Responsive layout ─────────────────────────────── */
+
+@media (max-width: 640px) {
+  .dash-grid > .repayment-summary {
+    padding: 18px 16px;
+  }
+
+  .repayment-summary-header {
+    margin-bottom: 16px;
+  }
+
+  .repayment-metrics {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .repayment-metric {
+    padding: 13px 14px;
+  }
+
+  .repayment-metric > strong {
+    font-size: 17px;
+  }
+
+  .repayment-facility-top {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .repayment-status {
+    align-self: flex-start;
+  }
+
+  .repayment-facility-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+
 @media (max-width: 640px) {
   .dash-grid {
     grid-template-columns: 1fr;

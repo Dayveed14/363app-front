@@ -65,6 +65,11 @@
   margin-top: 2px;
 }
 
+.txn-icon-repayment {
+  background: #fff4df;
+  color: #a16207;
+}
+
 @media (max-width: 560px) {
   .txn-note {
     max-width: 140px;

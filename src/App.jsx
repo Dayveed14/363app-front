@@ -14,12 +14,14 @@ import Withdraw from "./pages/Withdraw";
 import BusinessFinanceFacility from "./pages/BusinessFinanceFacility";
 import Transactions from "./pages/Transactions";
 import Profile from "./pages/Profile";
+import FinanceFacilityRepayment from "./pages/FinanceFacilityRepayment";
 import AdminOverview from "./pages/admin/AdminOverview";
 import AdminKyc from "./pages/admin/AdminKyc";
 import AdminDeposits from "./pages/admin/AdminDeposits";
 import AdminWithdrawals from "./pages/admin/AdminWithdrawals";
 import AdminFinanceFacilities from "./pages/admin/AdminFinanceFacilities";
 import AdminFinanceFacilityDetail from "./pages/admin/AdminFinanceFacilityDetail";
+import RepaymentCallback from "./pages/RepaymentCallback";
 
 export default function App() {
   return (
@@ -33,6 +35,7 @@ export default function App() {
           {/* Paystack redirects here after checkout — outside AppLayout since
               it doesn't need the sidebar and must work mid-flow. */}
           <Route path="/deposit/callback" element={<DepositCallback />} />
+          <Route path="/repayment/callback"element={<RepaymentCallback />} />
 
           <Route element={<AppLayout />}>
             <Route path="/" element={<Dashboard />} />
@@ -42,6 +45,7 @@ export default function App() {
             <Route path="/finance-facility" element={<BusinessFinanceFacility />} />
             <Route path="/transactions" element={<Transactions />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/finance-facility-repayments/:id" element={<FinanceFacilityRepayment />} />
           </Route>
 
           <Route element={<AdminLayout />}>

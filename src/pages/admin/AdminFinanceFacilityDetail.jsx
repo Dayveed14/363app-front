@@ -31,14 +31,18 @@ export default function AdminFinanceFacilityDetail() {
 
   usePageMeta({ title: app ? `Application #${app.id}` : "Finance Facility Application" });
 
-  function load() {
-    api.admin.financeFacility
-      .getOne(id)
-      .then(({ application }) => setApp(application))
-      .catch(() => setApp(null));
+  async function load() {
+  try {
+    const { application } = await api.admin.financeFacility.getOne(id);
+    setApp(application);
+  } catch {
+    setApp(null);
   }
+}
 
-  useEffect(load, [id]);
+  useEffect(() => {
+  load();
+}, [id]);
 
   async function viewDocument(docId) {
     try {
@@ -87,7 +91,36 @@ export default function AdminFinanceFacilityDetail() {
       setBusy(false);
     }
   }
+  async function disburse() {
+  const confirmed = window.confirm(
+    `Confirm that ${naira(app.approvedAmount)} has actually been released to ${app.member.fullName}?`
+  );
 
+  if (!confirmed) return;
+
+  const disbursementReference =
+    window.prompt(
+      "Enter the bank transfer or disbursement reference (optional):"
+    )?.trim() || "";
+
+  setBusy(true);
+  setError("");
+
+  try {
+    await api.admin.financeFacility.disburse(
+      id,
+      disbursementReference || null
+    );
+
+    await load();
+  } catch (err) {
+    setError(
+      errorMessage(err, "Couldn't mark this facility as disbursed.")
+    );
+  } finally {
+    setBusy(false);
+  }
+  }
   if (app === undefined) return null;
   if (app === null) return <p className="admin-empty">Application not found.</p>;
 
@@ -188,13 +221,87 @@ export default function AdminFinanceFacilityDetail() {
       {app.status === "approved" && (
         <div className="card ffd-section">
           <p className="ffd-eyebrow">Approved Terms</p>
+
           <div className="ffd-metrics">
-            <div><span>Approved amount</span><strong className="nums">{naira(app.approvedAmount)}</strong></div>
-            <div><span>Interest rate</span><strong>{app.interestRate}%</strong></div>
-            <div><span>Term</span><strong>{app.termMonths} months</strong></div>
-            <div><span>Repayment</span><strong className="nums">{naira(app.installmentAmount)}/{app.repaymentFrequency}</strong></div>
+            <div>
+              <span>Approved amount</span>
+              <strong className="nums">{naira(app.approvedAmount)}</strong>
+            </div>
+
+            <div>
+              <span>Interest rate</span>
+              <strong>{app.interestRate}%</strong>
+            </div>
+
+            <div>
+              <span>Term</span>
+              <strong>{app.termMonths} months</strong>
+            </div>
+
+            <div>
+              <span>Repayment</span>
+              <strong className="nums">
+                {naira(app.installmentAmount)}/{app.repaymentFrequency}
+              </strong>
+            </div>
           </div>
+
+          <div className="ffd-actions" style={{ marginTop: 18 }}>
+            <button
+              className="btn btn-primary"
+              type="button"
+              disabled={busy}
+              onClick={disburse}
+            >
+              <Check size={15} />
+              {busy ? "Processing..." : "Mark as Disbursed"}
+            </button>
+          </div>
+
+          <p className="admin-row-sub" style={{ marginTop: 10 }}>
+            Only mark this facility as disbursed after the funds have actually
+            been released. This action records the disbursement; it does not
+            transfer money.
+          </p>
         </div>
+      )}
+
+      {app.status === "disbursed" && (
+  <div className="card ffd-section">
+    <p className="ffd-eyebrow">Facility Disbursed</p>
+
+    <div className="ffd-metrics">
+      <div>
+        <span>Disbursed amount</span>
+        <strong className="nums">{naira(app.approvedAmount)}</strong>
+      </div>
+
+      <div>
+        <span>Disbursement date</span>
+        <strong>
+          {app.disbursedAt ? fmtDate(app.disbursedAt) : "Not recorded"}
+        </strong>
+      </div>
+
+      <div>
+        <span>Term</span>
+        <strong>{app.termMonths} months</strong>
+      </div>
+
+      <div>
+        <span>Repayment</span>
+        <strong className="nums">
+          {naira(app.installmentAmount)}/{app.repaymentFrequency}
+        </strong>
+      </div>
+    </div>
+
+    {app.disbursementReference && (
+      <p className="admin-row-sub" style={{ marginTop: 10 }}>
+        Reference: {app.disbursementReference}
+      </p>
+    )}
+  </div>
       )}
 
       {error && <p className="field-error" style={{ margin: "0 4px 14px" }}>{error}</p>}
