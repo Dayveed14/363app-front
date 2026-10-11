@@ -13,9 +13,27 @@ export default function DepositCallback() {
   const [searchParams] = useSearchParams();
   const reference = searchParams.get("reference");
 
-  const [state, setState] = useState("loading"); // loading | success | pending | failed | error
+  const [state, setState] = useState("loading"); // loading | processing | pending | failed | error
   const [deposit, setDeposit] = useState(null);
   const [error, setError] = useState("");
+
+  function check() {
+    setState("loading");
+    api.deposits
+      .verify(reference)
+      .then(({ deposit: d }) => {
+        setDeposit(d);
+        // 'initialized' = Paystack hasn't finished the payment (yet). It is NOT
+        // a success — the backend only credits once Paystack confirms it.
+        if (d.status === "failed" || d.status === "declined") setState("failed");
+        else if (d.status === "initialized") setState("processing");
+        else setState("pending");
+      })
+      .catch((err) => {
+        setState("error");
+        setError(err instanceof ApiError ? err.message : "Couldn't confirm this deposit.");
+      });
+  }
 
   useEffect(() => {
     if (!reference) {
@@ -23,17 +41,7 @@ export default function DepositCallback() {
       setError("No deposit reference was provided.");
       return;
     }
-
-    api.deposits
-      .verify(reference)
-      .then(({ deposit: d }) => {
-        setDeposit(d);
-        setState(d.status === "failed" ? "failed" : "pending");
-      })
-      .catch((err) => {
-        setState("error");
-        setError(err instanceof ApiError ? err.message : "Couldn't confirm this deposit.");
-      });
+    check();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reference]);
 
@@ -45,6 +53,20 @@ export default function DepositCallback() {
             <div className="login-mark"><Clock3 size={20} /></div>
             <h2 className="login-heading">Confirming your payment…</h2>
             <p className="login-sub">This only takes a moment.</p>
+          </>
+        )}
+
+        {state === "processing" && (
+          <>
+            <div className="login-mark"><Clock3 size={20} /></div>
+            <h2 className="login-heading">Payment still processing</h2>
+            <p className="login-sub">
+              Your bank hasn't finished this payment yet — nothing has been added to your balance.
+              Check again in a minute; if you've completed payment, it will be credited once confirmed.
+            </p>
+            <button className="btn btn-ghost btn-block" style={{ marginBottom: 8 }} onClick={check}>
+              Check again
+            </button>
           </>
         )}
 

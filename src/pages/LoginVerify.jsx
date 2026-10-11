@@ -36,12 +36,13 @@ export default function LoginVerify() {
     setLoading(true);
     try {
       const { user } = await verifyLoginOtp({ code });
-      // Admins land on the admin dashboard by default — nothing before this
-      // ever sent them there otherwise, so logging in as a freshly-promoted
-      // admin would land on the member dashboard with no obvious way in.
-      // A `from` (deep link into either area) still wins when present.
-      const fallback = user?.role === "admin" ? "/admin" : "/";
-      navigate(from?.pathname ?? fallback, { replace: true });
+      // Admins should land in the admin area by default. Only honour a saved
+      // destination when it belongs to the signed-in user's area.
+      const requestedPath = from?.pathname;
+      const destination = user?.role === "admin"
+        ? (requestedPath?.startsWith("/admin") ? requestedPath : "/admin")
+        : (requestedPath && !requestedPath.startsWith("/admin") ? requestedPath : "/");
+      navigate(destination, { replace: true });
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
     } finally {

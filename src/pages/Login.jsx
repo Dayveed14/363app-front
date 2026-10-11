@@ -20,7 +20,7 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  if (user) return <Navigate to="/" replace />;
+  if (user) return <Navigate to={user.role === "admin" ? "/admin" : "/"} replace />;
 
   async function handleSubmit(e) {
     e.preventDefault();
