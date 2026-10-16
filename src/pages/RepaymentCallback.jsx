@@ -43,6 +43,12 @@ export default function RepaymentCallback() {
 
         const data = response?.data ?? response;
 
+        if (data?.status === "failed") {
+          throw new Error(
+            "Paystack reported this payment as failed. You have not been charged for this installment."
+          );
+        }
+
         const returnedFacilityId =
           data?.facilityId ??
           data?.facility?.id ??
@@ -53,7 +59,8 @@ export default function RepaymentCallback() {
 
         setStatus("success");
         setMessage(
-          "Your payment has been verified. Your repayment records will now be refreshed."
+          response?.message ||
+            "Your payment has been received. It will reflect on your facility once an admin confirms it."
         );
 
         if (returnedFacilityId) {
@@ -69,7 +76,8 @@ export default function RepaymentCallback() {
           }, 1500);
         } else {
           setMessage(
-            "Your payment has been verified. Return to your dashboard to view your updated repayment balance."
+            response?.message ||
+              "Your payment has been received and is awaiting admin confirmation."
           );
         }
       } catch (error) {
@@ -129,7 +137,7 @@ export default function RepaymentCallback() {
           {status === "verifying"
             ? "Verifying payment"
             : status === "success"
-              ? "Payment verified"
+              ? "Payment received"
               : "Payment verification issue"}
         </h1>
 

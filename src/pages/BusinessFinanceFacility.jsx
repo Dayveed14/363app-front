@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Briefcase,
   CheckCircle2,
@@ -24,7 +25,10 @@ const STATUS_LABEL = {
   additional_information_required: "Action needed",
   approved: "Approved",
   declined: "Declined",
+  offer_accepted: "Accepted — awaiting disbursement",
+  offer_declined: "Offer declined",
   disbursed: "Disbursed",
+  completed: "Fully repaid",
 };
 
 const PURPOSE_OPTIONS = [
@@ -41,7 +45,7 @@ const REQUIRED_DOCS = [
   { type: "financial_records", label: "Business financial records" },
 ];
 
-const ACTIVE_STATUSES = ["submitted", "under_review", "additional_information_required", "approved", "disbursed"];
+const ACTIVE_STATUSES = ["submitted", "under_review", "additional_information_required", "approved", "offer_accepted", "disbursed"];
 
 export default function BusinessFinanceFacility() {
   usePageMeta({ title: "Business Finance Facility" });
@@ -100,8 +104,8 @@ export default function BusinessFinanceFacility() {
 }
 
 function statusPillClass(status) {
-  if (status === "approved") return "pill-success";
-  if (status === "declined") return "pill-declined";
+  if (status === "approved" || status === "offer_accepted" || status === "completed") return "pill-success";
+  if (status === "declined" || status === "offer_declined") return "pill-declined";
   return "pill-pending";
 }
 
@@ -421,6 +425,14 @@ return ( <div className="card ff-offer"> <p className="ff-status-eyebrow">Facili
         Disbursement reference: {application.disbursementReference}
       </p>
     )}
+
+    <Link
+      to={`/finance-facility-repayments/${application.id}`}
+      className="btn btn-primary"
+      style={{ marginTop: 16, display: "inline-block" }}
+    >
+      View repayment plan
+    </Link>
   </div>
 );
 
@@ -428,34 +440,27 @@ return ( <div className="card ff-offer"> <p className="ff-status-eyebrow">Facili
 }
 
 if (application.status === "approved") {
-return ( <div className="card ff-offer"> <p className="ff-status-eyebrow">Approved — Awaiting Disbursement</p>
+return <OfferCard application={application} onRefresh={onRefresh} />;
+}
 
+if (application.status === "offer_accepted") {
+return (
+  <div className="card ff-offer">
+    <p className="ff-status-eyebrow">Offer Accepted — Awaiting Disbursement</p>
 
-    <p className="ff-offer-amount nums">
-      {naira(application.approvedAmount)}
-    </p>
-
-    {Number(application.amountRequested) !==
-      Number(application.approvedAmount) && (
-      <p className="form-card-sub">
-        Requested {naira(application.amountRequested)}
-      </p>
-    )}
+    <p className="ff-offer-amount nums">{naira(application.approvedAmount)}</p>
 
     <div className="ff-offer-terms">
       <div>
         <span>Term</span>
         <strong>{application.termMonths} months</strong>
       </div>
-
       <div>
         <span>Repayment</span>
         <strong>
-          {naira(application.installmentAmount)}/
-          {application.repaymentFrequency}
+          {naira(application.installmentAmount)}/{application.repaymentFrequency}
         </strong>
       </div>
-
       <div>
         <span>Interest</span>
         <strong>{application.interestRate}%</strong>
@@ -463,12 +468,11 @@ return ( <div className="card ff-offer"> <p className="ff-status-eyebrow">Approv
     </div>
 
     <p className="form-card-sub" style={{ marginTop: 12 }}>
-      Your facility has been approved and is awaiting disbursement.
+      You accepted this offer{application.offerAcceptedAt ? ` on ${fmtDate(application.offerAcceptedAt)}` : ""}.
+      An officer will disburse the facility and we'll email you when it's done.
     </p>
   </div>
 );
-
-
 }
 
 if (application.status === "additional_information_required") {
@@ -523,3 +527,74 @@ return ( <div className="card ff-intro"> <div className="ff-intro-icon"> <Clock3
 );
 }
 
+
+
+function OfferCard({ application, onRefresh }) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  async function respond(kind) {
+    if (
+      kind === "decline" &&
+      !window.confirm("Decline this offer? You can apply again afterwards.")
+    ) {
+      return;
+    }
+    setBusy(true);
+    setError("");
+    try {
+      if (kind === "accept") await api.financeFacility.acceptOffer(application.id);
+      else await api.financeFacility.declineOffer(application.id);
+      onRefresh();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Couldn't record your response. Please try again.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="card ff-offer">
+      <p className="ff-status-eyebrow">Facility Offer</p>
+
+      <p className="ff-offer-amount nums">{naira(application.approvedAmount)}</p>
+
+      {Number(application.amountRequested) !== Number(application.approvedAmount) && (
+        <p className="form-card-sub">Requested {naira(application.amountRequested)}</p>
+      )}
+
+      <div className="ff-offer-terms">
+        <div>
+          <span>Term</span>
+          <strong>{application.termMonths} months</strong>
+        </div>
+        <div>
+          <span>Repayment</span>
+          <strong>
+            {naira(application.installmentAmount)}/{application.repaymentFrequency}
+          </strong>
+        </div>
+        <div>
+          <span>Interest</span>
+          <strong>{application.interestRate}%</strong>
+        </div>
+      </div>
+
+      <p className="form-card-sub" style={{ marginTop: 12 }}>
+        Your application has been approved. Accept the offer to proceed to disbursement,
+        or decline it — you can apply again at any time.
+      </p>
+
+      {error && <p className="field-error" style={{ marginTop: 10 }}>{error}</p>}
+
+      <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
+        <button className="btn btn-primary" disabled={busy} onClick={() => respond("accept")}>
+          {busy ? "Please wait…" : "Accept offer"}
+        </button>
+        <button className="btn btn-ghost" disabled={busy} onClick={() => respond("decline")}>
+          Decline offer
+        </button>
+      </div>
+    </div>
+  );
+}

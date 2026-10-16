@@ -8,9 +8,12 @@ const TABS = [
   { key: "under_review", label: "Under Review" },
   { key: "submitted", label: "Submitted" },
   { key: "additional_information_required", label: "Awaiting Member" },
-  { key: "approved", label: "Approved" },
+  { key: "approved", label: "Awaiting Acceptance" },
+  { key: "offer_accepted", label: "Ready to Disburse" },
+  { key: "offer_declined", label: "Offer Declined" },
   { key: "declined", label: "Declined" },
   { key: "disbursed", label: "Disbursed" },
+  { key: "completed", label: "Completed" },
 ];
 
 const naira = (n) => "₦" + Number(n).toLocaleString("en-NG");

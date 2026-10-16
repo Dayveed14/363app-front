@@ -21,6 +21,7 @@ import AdminDeposits from "./pages/admin/AdminDeposits";
 import AdminWithdrawals from "./pages/admin/AdminWithdrawals";
 import AdminFinanceFacilities from "./pages/admin/AdminFinanceFacilities";
 import AdminFinanceFacilityDetail from "./pages/admin/AdminFinanceFacilityDetail";
+import AdminRepayments from "./pages/admin/AdminRepayments";
 import RepaymentCallback from "./pages/RepaymentCallback";
 
 export default function App() {
@@ -54,6 +55,7 @@ export default function App() {
             <Route path="/admin/deposits" element={<AdminDeposits />} />
             <Route path="/admin/withdrawals" element={<AdminWithdrawals />} />
             <Route path="/admin/finance-facilities" element={<AdminFinanceFacilities />} />
+            <Route path="/admin/loan-repayments" element={<AdminRepayments />} />
             <Route path="/admin/finance-facilities/:id" element={<AdminFinanceFacilityDetail />} />
           </Route>
         </Routes>

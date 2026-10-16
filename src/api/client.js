@@ -107,6 +107,8 @@ export const api = {
     getOne: (id) => request(`/api/finance-facilities/${id}`),
     addDocument: (id, formData) => requestForm(`/api/finance-facilities/${id}/documents`, formData),
     document: (id, docId) => requestBlob(`/api/finance-facilities/${id}/documents/${docId}`),
+    acceptOffer: (id) => request(`/api/finance-facilities/${id}/offer/accept`, { method: "POST" }),
+    declineOffer: (id) => request(`/api/finance-facilities/${id}/offer/decline`, { method: "POST" }),
   },
     financeFacilityRepayments: {
     // Repayment dashboard: facilities, balances, and next payments.
@@ -158,6 +160,14 @@ export const api = {
       approve: (id) => request(`/api/admin/withdrawals/${id}/approve`, { method: "POST" }),
       decline: (id, reason) => request(`/api/admin/withdrawals/${id}/decline`, { method: "POST", body: { reason } }),
       process: (id) => request(`/api/admin/withdrawals/${id}/process`, { method: "POST" }),
+    },
+    financeFacilityRepayments: {
+      list: (status) =>
+        request(`/api/finance-facility-repayments/admin${status ? `?status=${status}` : ""}`),
+      confirm: (id) =>
+        request(`/api/finance-facility-repayments/admin/${id}/confirm`, { method: "POST" }),
+      decline: (id, reason) =>
+        request(`/api/finance-facility-repayments/admin/${id}/decline`, { method: "POST", body: { reason } }),
     },
     financeFacility: {
       list: (status) => request(`/api/admin/finance-facilities${status ? `?status=${status}` : ""}`),

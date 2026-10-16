@@ -1,4 +1,4 @@
-import { LayoutGrid, ShieldCheck, ArrowDownToLine, ArrowUpFromLine, History, UserRound, Briefcase } from "lucide-react";
+import { LayoutGrid, ShieldCheck, ArrowDownToLine, ArrowUpFromLine, History, UserRound, Briefcase, Banknote } from "lucide-react";
 
 export const navItems = [
   { to: "/", label: "Dashboard", icon: LayoutGrid, end: true },
@@ -18,4 +18,5 @@ export const adminNavItems = [
   { to: "/admin/deposits", label: "Deposits", icon: ArrowDownToLine },
   { to: "/admin/withdrawals", label: "Withdrawals", icon: ArrowUpFromLine },
   { to: "/admin/finance-facilities", label: "Finance Facility", icon: Briefcase },
+  { to: "/admin/loan-repayments", label: "Loan Repayments", icon: Banknote },
 ];

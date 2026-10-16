@@ -93,6 +93,7 @@ export default function FinanceFacilityRepayment() {
   const verificationStarted = useRef(false);
 
   const [facility, setFacility] = useState(null);
+  const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [paying, setPaying] = useState(false);
@@ -119,6 +120,11 @@ export default function FinanceFacilityRepayment() {
           : Array.isArray(response?.facilities)
             ? response.facilities
             : [];
+
+        const allHistory = Array.isArray(response?.data?.repaymentHistory)
+          ? response.data.repaymentHistory
+          : [];
+        setHistory(allHistory.filter((h) => String(h.facility_id) === String(id)));
 
         const selectedFacility = facilities.find(
           (item) =>
@@ -176,8 +182,15 @@ export default function FinanceFacilityRepayment() {
           );
         }
 
+        if (response?.data?.status === "failed") {
+          throw new Error(
+            "Paystack reported this payment as failed. You have not been charged."
+          );
+        }
+
         setNotice(
-          "Payment verified successfully. Your repayment information has been refreshed."
+          response?.message ||
+            "Payment received. It will reflect on your facility once an admin confirms it."
         );
 
         // Remove the payment reference from the address bar.
@@ -232,7 +245,11 @@ export default function FinanceFacilityRepayment() {
     Number(facility?.installmentAmount ?? 0)
   );
 
-  const remainingInstallment = nextRepayment
+  const awaitingConfirmation = history
+    .filter((h) => h.status === "pending_confirmation")
+    .reduce((sum, h) => sum + Number(h.amount || 0), 0);
+
+  const rawRemainingInstallment = nextRepayment
     ? Math.max(
         0,
         Number(
@@ -244,6 +261,13 @@ export default function FinanceFacilityRepayment() {
         )
       )
     : 0;
+
+  // Money already paid and awaiting admin confirmation isn't on the
+  // schedule yet; don't invite a second payment for the same installment.
+  const remainingInstallment = Math.max(
+    0,
+    Number((rawRemainingInstallment - awaitingConfirmation).toFixed(2))
+  );
 
   const progress =
     totalRepayable > 0
@@ -509,7 +533,20 @@ export default function FinanceFacilityRepayment() {
         </article>
       </section>
 
-      {!completed && nextRepayment && (
+      {awaitingConfirmation > 0 && (
+        <div className="repayment-message repayment-message-info" role="status">
+          <Clock3 size={21} />
+          <div>
+            <strong>Awaiting admin confirmation</strong>
+            <p>
+              {naira(awaitingConfirmation)} has been paid and will be applied to
+              your schedule once an admin confirms receipt.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {!completed && nextRepayment && remainingInstallment > 0 && (
         <section className="repayment-next-card">
           <div className="repayment-next-icon">
             <CalendarDays size={23} />
@@ -718,8 +755,8 @@ export default function FinanceFacilityRepayment() {
 
             <p className="repayment-table-note">
               <ShieldCheck size={15} />
-              Payments are confirmed by the server before repayment
-              records are updated.
+              Payments are applied to your schedule only after an admin
+              confirms receipt.
             </p>
           </>
         )}

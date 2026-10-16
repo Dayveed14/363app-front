@@ -220,7 +220,35 @@ export default function AdminFinanceFacilityDetail() {
       )}
       {app.status === "approved" && (
         <div className="card ffd-section">
-          <p className="ffd-eyebrow">Approved Terms</p>
+          <p className="ffd-eyebrow">Approved Terms — Awaiting Member Acceptance</p>
+          <div className="ffd-metrics">
+            <div><span>Approved amount</span><strong className="nums">{naira(app.approvedAmount)}</strong></div>
+            <div><span>Interest rate</span><strong>{app.interestRate}%</strong></div>
+            <div><span>Term</span><strong>{app.termMonths} months</strong></div>
+            <div><span>Repayment</span><strong className="nums">{naira(app.installmentAmount)}/{app.repaymentFrequency}</strong></div>
+          </div>
+          <p className="admin-row-sub" style={{ marginTop: 10 }}>
+            The member must accept this offer before it can be disbursed.
+          </p>
+        </div>
+      )}
+      {app.status === "offer_declined" && (
+        <div className="card ffd-section">
+          <p className="ffd-eyebrow">Offer Declined</p>
+          <p className="admin-row-sub">
+            The member declined this offer{app.offerDeclinedAt ? ` on ${fmtDate(app.offerDeclinedAt)}` : ""}. They can apply again.
+          </p>
+        </div>
+      )}
+      {app.status === "completed" && (
+        <div className="card ffd-section">
+          <p className="ffd-eyebrow">Fully Repaid</p>
+          <p className="admin-row-sub">This facility has been fully repaid.</p>
+        </div>
+      )}
+      {app.status === "offer_accepted" && (
+        <div className="card ffd-section">
+          <p className="ffd-eyebrow">Offer Accepted — Ready to Disburse</p>
 
           <div className="ffd-metrics">
             <div>
@@ -378,8 +406,8 @@ function ApproveForm({ applicationId, requestedAmount, onApproved, busy, setBusy
         <div className="field">
           <label>Repayment frequency</label>
           <select value={terms.repaymentFrequency} onChange={update("repaymentFrequency")}>
-            <option value="weekly">Weekly</option>
-            <option value="biweekly">Biweekly</option>
+            {/* <option value="weekly">Weekly</option>
+            <option value="biweekly">Biweekly</option> */}
             <option value="monthly">Monthly</option>
           </select>
         </div>
