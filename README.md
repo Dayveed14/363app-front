@@ -139,7 +139,11 @@ than letting them inherit a neighboring page's title.
   shows their request alongside the same document-upload checklist;
   uploading flips the application back into review automatically. Once
   approved it shows the offered terms (which may differ from what was
-  requested). Application history sits below throughout. Declined
+  requested) with **Accept offer / Decline offer** buttons; after
+  acceptance it reads "awaiting disbursement" until an officer disburses.
+  Disbursed facilities link to the repayment plan, which shows payments
+  that are paid but still awaiting admin confirmation. Application
+  history sits below throughout. Declined
   applications don't block starting a new one.
 - **`src/pages/admin/`** — a second, separate area at `/admin`, `/admin/kyc`,
   `/admin/deposits`, `/admin/withdrawals`, `/admin/finance-facilities`,
@@ -152,7 +156,10 @@ than letting them inherit a neighboring page's title.
   view the member's KYC documents, the application's own documents, then
   the decision — request more information, decline with a reason, or
   approve with terms (amount defaults to what was requested but is
-  editable, since officers can counter-offer). Document previews are
+  editable, since officers can counter-offer). "Mark as Disbursed" only
+  appears once the member has accepted. `/admin/loan-repayments`
+  (`AdminRepayments.jsx`) lists member repayments by status and lets an
+  admin confirm receipt or decline with a reason. Document previews are
   fetched as a blob with credentials and opened via
   `URL.createObjectURL` rather than linked directly, so viewing one still
   goes through the normal cookie-authenticated request.
@@ -163,10 +170,7 @@ than letting them inherit a neighboring page's title.
 ## Still mock, pending the next backend phase
 
 The change-password form is still local state — no backend endpoint for
-it yet. Finance facility offer acceptance, agreement signing,
-disbursement, the active-facility/repayment-schedule view, and appeals
-come next (the member page already shows the approved terms, but says
-plainly that the next steps aren't built yet rather than pretending).
+it yet. Finance facility agreement signing and appeals come next.
 Search the codebase for `// Would call` and `// Replace with` to find
 what's left.
 
