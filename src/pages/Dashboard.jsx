@@ -148,116 +148,24 @@ Promise.allSettled([
 });
 
 
+    // One request. The backend already returns balance, totals, next
+    // instalment and schedule per facility, so nothing is re-derived here.
     api.financeFacilityRepayments
       .getDashboard()
-      .then(async (response) => {
-        const facilities = Array.isArray(response?.data?.facilities)
-  ? response.data.facilities
-  : Array.isArray(response?.facilities)
-    ? response.facilities
-    : [];
-
-        // Fetch individual details as a fallback if the dashboard endpoint
-        // returns disbursed facilities without their repayment summaries.
-        const detailedFacilities = await Promise.all(
-          facilities.map(async (facility) => {
-            const facilityId = facility.id ?? facility.facilityId;
-
-            let balance =
-              facility.balance ??
-              facility.outstandingBalance ??
-              facility.repaymentBalance;
-
-            let nextDue =
-              facility.nextDue ??
-              facility.nextRepayment ??
-              facility.nextRepaymentDue ??
-              facility.nextInstallment;
-
-            let schedule =
-              facility.schedule ??
-              facility.repaymentSchedule ??
-              facility.installments;
-
-            if (
-              facilityId &&
-              (balance == null || nextDue === undefined || schedule === undefined)
-            ) {
-              const results = await Promise.allSettled([
-                balance == null
-                  ? api.financeFacilityRepayments.getBalance(facilityId)
-                  : Promise.resolve(null),
-                nextDue === undefined || schedule === undefined
-                  ? api.financeFacilityRepayments.getSchedule(facilityId)
-                  : Promise.resolve(null),
-              ]);
-
-              if (results[0].status === "fulfilled" && results[0].value) {
-                const data = results[0].value;
-                balance =
-                  data.balance ??
-                  data.outstandingBalance ??
-                  data;
-              }
-
-              if (results[1].status === "fulfilled" && results[1].value) {
-                const data = results[1].value;
-
-                if (schedule === undefined) {
-                  schedule =
-                    data.schedule ??
-                    data.installments ??
-                    data.repayments ??
-                    [];
-                }
-
-                if (nextDue === undefined) {
-                  nextDue =
-                    data.nextDue ??
-                    data.nextRepaymentDue ??
-                    null;
-                }
-              }
-            }
-
-            const balanceData =
-              balance && typeof balance === "object" ? balance : {};
-
-            const scheduleRows = Array.isArray(schedule) ? schedule : [];
-
-            if (!nextDue && scheduleRows.length) {
-              nextDue =
-                scheduleRows.find(
-                  (item) =>
-                    !["paid", "completed"].includes(
-                      String(item.status || "").toLowerCase()
-                    ) &&
-                    Number(item.amountDue ?? item.amount_due ?? 0) >
-                      Number(item.amountPaid ?? item.amount_paid ?? 0)
-                ) ?? null;
-            }
-
-            return {
-              ...facility,
-              balance: balanceData,
-              nextDue,
-              schedule: scheduleRows,
-            };
-          })
+      .then((response) => {
+        if (cancelled) return;
+        const data = response?.data ?? response;
+        setRepaymentFacilities(
+          Array.isArray(data?.facilities) ? data.facilities : []
         );
-
-        if (!cancelled) {
-          setRepaymentFacilities(detailedFacilities);
-          setRepaymentError("");
-        }
+        setRepaymentError("");
       })
       .catch(() => {
-        if (!cancelled) {
-          setRepaymentFacilities([]);
-          setRepaymentError(
-            "Your repayment summary could not be loaded. Please refresh the page."
-          );
-        }
+        if (cancelled) return;
+        setRepaymentFacilities([]);
+        setRepaymentError(
+          "Your repayment summary could not be loaded. Please refresh the page."
+        );
       })
       .finally(() => {
         if (!cancelled) setRepaymentsLoading(false);
@@ -374,7 +282,8 @@ function RepaymentSummary({ facilities, loading, error }) {
     return (
       facility.disbursedAt ||
       facility.disbursementDate ||
-      status === "disbursed"
+      status === "disbursed" ||
+      status === "completed"
     );
   });
 
@@ -399,101 +308,50 @@ function RepaymentSummary({ facilities, loading, error }) {
       </div>
 
       {disbursedFacilities.map((facility) => {
-        const balance = facility.balance ?? {};
+        const money = (value) => Number(value ?? 0) || 0;
 
-        const outstanding = Number(
-          balance.outstandingBalance ??
-            facility.outstandingBalance ??
-            0
+        const totalRepayable = money(facility.totalRepayable);
+        const totalPaid = money(facility.totalPaid);
+        const awaiting = money(facility.awaitingConfirmation);
+        const installmentCount = money(
+          facility.installmentCount ?? facility.termMonths
         );
+        const installmentAmount = money(facility.installmentAmount);
+        const scheduleReady = installmentCount > 0;
 
-        const totalRepayable = Number(
-          balance.totalRepayable ??
-            facility.totalRepayable ??
-            facility.total_repayable ??
-            0
-        );
-
-        const totalPaid = Number(
-          balance.totalPaid ??
-            facility.totalPaid ??
-            0
-        );
-
-        const installmentAmount = Number(
-          facility.installmentAmount ??
-            facility.installment_amount ??
-            facility.monthlyInstallment ??
-            facility.monthly_installment ??
-            facility.repaymentAmount ??
-            0
+        // Authoritative figure from the server (sum of what is still unpaid
+        // on the schedule). Only fall back to the subtraction if absent.
+        const outstanding = Math.max(
+          0,
+          facility.outstandingBalance != null
+            ? money(facility.outstandingBalance)
+            : totalRepayable - totalPaid
         );
 
         const schedule = Array.isArray(facility.schedule)
           ? facility.schedule
           : [];
+        const paidInstallments = schedule.filter(
+          (item) => String(item.status || "").toLowerCase() === "paid"
+        ).length;
 
-        const nextDue = facility.nextDue;
-
-        const nextDueDate =
-          nextDue?.dueDate ??
-          nextDue?.due_date ??
-          null;
-
-        const nextDueAmount = Number(
-          nextDue?.remainingAmount ??
-            nextDue?.remaining_amount ??
-            (
-              Number(nextDue?.amountDue ?? nextDue?.amount_due ?? 0) -
-              Number(nextDue?.amountPaid ?? nextDue?.amount_paid ?? 0)
-            )
+        const nextDue = facility.nextRepayment ?? null;
+        const nextDueDate = nextDue?.dueDate ?? null;
+        // Money already paid and awaiting confirmation is not on the
+        // schedule yet; do not ask for it again.
+        const nextDueAmount = Math.max(
+          0,
+          money(nextDue?.remainingAmount) - awaiting
         );
-
-        const paidInstallments = schedule.filter((item) => {
-          const status = String(item.status || "").toLowerCase();
-          return status === "paid" || status === "completed";
-        }).length;
-
-        const installmentCount = Number(
-          balance.installmentCount ??
-            facility.termMonths ??
-            facility.term_months ??
-            schedule.length ??
-            0
-        );
-
-        const calculatedPaid =
-          totalRepayable > 0
-            ? totalPaid
-            : schedule.reduce(
-                (sum, item) =>
-                  sum +
-                  Number(item.amountPaid ?? item.amount_paid ?? 0),
-                0
-              );
-
-        const calculatedTotal =
-          totalRepayable > 0
-            ? totalRepayable
-            : schedule.reduce(
-                (sum, item) =>
-                  sum + Number(item.amountDue ?? item.amount_due ?? 0),
-                0
-              );
 
         const progress =
-          calculatedTotal > 0
-            ? Math.min(
-                100,
-                Math.max(0, (calculatedPaid / calculatedTotal) * 100)
-              )
-            : installmentCount > 0
-              ? (paidInstallments / installmentCount) * 100
-              : 0;
+          totalRepayable > 0
+            ? Math.min(100, Math.max(0, (totalPaid / totalRepayable) * 100))
+            : 0;
 
         const completed =
-          balance.completed === true ||
-          (calculatedTotal > 0 && outstanding <= 0);
+          facility.completed === true ||
+          (scheduleReady && outstanding <= 0);
 
         const facilityName =
           facility.businessName ??
@@ -505,7 +363,7 @@ function RepaymentSummary({ facilities, loading, error }) {
         return (
           <div
             className="repayment-facility"
-            key={facility.id ?? facility.facilityId}
+            key={facility.facilityId ?? facility.id}
           >
             <div className="repayment-facility-top">
               <div>
@@ -554,6 +412,20 @@ function RepaymentSummary({ facilities, loading, error }) {
               </div>
             </div>
 
+            {!scheduleReady && (
+              <p className="form-card-sub">
+                Your repayment schedule is still being prepared. Figures will
+                appear once it is ready.
+              </p>
+            )}
+
+            {awaiting > 0 && (
+              <p className="form-card-sub">
+                {naira(awaiting)} paid and awaiting admin confirmation. It
+                will reduce your outstanding balance once confirmed.
+              </p>
+            )}
+
             <div className="repayment-progress-section">
               <div className="repayment-progress-label">
                 <span>Repayment progress</span>
@@ -582,7 +454,7 @@ function RepaymentSummary({ facilities, loading, error }) {
               </span>
 
               <Link
-                to={`/finance-facility-repayments/${facility.id ?? facility.facilityId}`}
+                to={`/finance-facility-repayments/${facility.facilityId ?? facility.id}`}
                 className="dash-txns-link repayment-details-link"
               >
                 View repayment plan <ArrowRight size={15} />
