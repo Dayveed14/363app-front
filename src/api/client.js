@@ -14,7 +14,10 @@ export { ApiError };
 async function request(path, { method = "GET", body } = {}) {
   const res = await fetch(`${API_URL}${path}`, {
     method,
-    headers: { "Content-Type": "application/json" },
+    // X-Requested-With is the backend's CSRF guard: a cross-site page can't
+    // add a custom header to a credentialed request, so requests without it
+    // are refused.
+    headers: { "Content-Type": "application/json", "X-Requested-With": "363app" },
     body: body ? JSON.stringify(body) : undefined,
     // Every auth token (access, refresh, pending-2FA) lives in an httpOnly
     // cookie set by the backend — this app never sees or stores a token
@@ -42,6 +45,7 @@ async function request(path, { method = "GET", body } = {}) {
 async function requestForm(path, formData) {
   const res = await fetch(`${API_URL}${path}`, {
     method: "POST",
+    headers: { "X-Requested-With": "363app" },
     body: formData,
     credentials: "include",
   });
@@ -154,6 +158,7 @@ export const api = {
       list: (status) => request(`/api/admin/deposits${status ? `?status=${status}` : ""}`),
       confirm: (id) => request(`/api/admin/deposits/${id}/confirm`, { method: "POST" }),
       decline: (id, reason) => request(`/api/admin/deposits/${id}/decline`, { method: "POST", body: { reason } }),
+      reconcile: () => request("/api/admin/deposits/reconcile", { method: "POST" }),
     },
     withdrawals: {
       list: (status) => request(`/api/admin/withdrawals${status ? `?status=${status}` : ""}`),
@@ -164,6 +169,7 @@ export const api = {
     financeFacilityRepayments: {
       list: (status) =>
         request(`/api/finance-facility-repayments/admin${status ? `?status=${status}` : ""}`),
+      reconcile: () => request("/api/finance-facility-repayments/admin/reconcile", { method: "POST" }),
       confirm: (id) =>
         request(`/api/finance-facility-repayments/admin/${id}/confirm`, { method: "POST" }),
       decline: (id, reason) =>

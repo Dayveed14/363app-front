@@ -174,6 +174,16 @@ it yet. Finance facility agreement signing and appeals come next.
 Search the codebase for `// Would call` and `// Replace with` to find
 what's left.
 
+## CSRF header
+
+`src/api/client.js` adds `X-Requested-With: 363app` to every state-changing
+request (JSON and multipart). The backend rejects POST/PUT/PATCH/DELETE
+without it, which is what blocks cross-site request forgery now that auth
+rides on cookies. If you add a new `fetch` call that changes data, add the
+header there too — better, route it through `request()`. The admin Deposits
+and Loan Repayments pages have a "Check for missed payments" button that
+recovers payments the member started but never completed on our side.
+
 ## Stack
 
 React 18 · Vite · React Router · lucide-react icons. No CSS framework —

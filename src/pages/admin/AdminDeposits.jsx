@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Check, X } from "lucide-react";
+import { Check, X, RefreshCw } from "lucide-react";
 import { api, ApiError } from "../../api/client";
 import { usePageMeta } from "../../seo/usePageMeta";
 import "./Admin.css";
@@ -22,6 +22,7 @@ export default function AdminDeposits() {
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState(null);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
 
   function load(status) {
     setLoading(true);
@@ -33,6 +34,20 @@ export default function AdminDeposits() {
   }
 
   useEffect(() => load(tab), [tab]);
+
+  async function reconcile() {
+    setError("");
+    setNotice("");
+    try {
+      const { summary } = await api.admin.deposits.reconcile();
+      setNotice(
+        `Checked ${summary.checked} unfinished deposit(s): ${summary.credited} recovered, ${summary.failed} failed, ${summary.stillPending} still unpaid.`
+      );
+      load(tab);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Couldn't run the check.");
+    }
+  }
 
   async function confirm(id) {
     setBusyId(id);
@@ -78,6 +93,12 @@ export default function AdminDeposits() {
         </div>
       </div>
 
+      <div style={{ margin: "0 4px 14px" }}>
+        <button className="btn btn-ghost" onClick={reconcile} title="Re-check payments that were started but never completed on our side">
+          <RefreshCw size={15} /> Check for missed payments
+        </button>
+      </div>
+      {notice && <p className="admin-row-sub" style={{ margin: "0 4px 14px" }}>{notice}</p>}
       {error && <p className="field-error" style={{ margin: "0 4px 14px" }}>{error}</p>}
 
       {loading ? (
